@@ -1,0 +1,27 @@
+DEFINE
+    MEASURE _Measures[Volume Weighted Price] =
+        DIVIDE (
+            SUMX ( FactPrice, FactPrice[RRP] * FactPrice[TOTALDEMAND] ),
+            SUM ( FactPrice[TOTALDEMAND] )
+        )
+    MEASURE _Measures[Time Weighted Price] =
+        AVERAGE ( FactPrice[RRP] )
+    MEASURE _Measures[Intervals] =
+        COUNTROWS ( FactPrice )
+    MEASURE _Measures[Negative Price Intervals %] =
+        DIVIDE ( CALCULATE ( [Intervals], FactPrice[RRP] < 0 ), [Intervals] )
+    MEASURE _Measures[Price Spike Intervals] =
+        CALCULATE ( [Intervals], FactPrice[RRP] > 300 )
+    MEASURE _Measures[Price Spike Intervals %] =
+        DIVIDE ( [Price Spike Intervals], [Intervals] )
+    MEASURE _Measures[Price Volatility (Std Dev)] =
+        STDEV.P ( FactPrice[RRP] )
+    MEASURE _Measures[VWP Prior Year] =
+        CALCULATE ( [Volume Weighted Price], SAMEPERIODLASTYEAR ( DimDate[Date] ) )
+    MEASURE _Measures[VWP YoY %] =
+        DIVIDE ( [Volume Weighted Price] - [VWP Prior Year], [VWP Prior Year] )
+    MEASURE _Measures[Neg % Prior Year] =
+        CALCULATE ( [Negative Price Intervals %], SAMEPERIODLASTYEAR ( DimDate[Date] ) )
+    MEASURE _Measures[Prior FY Label] =
+        VAR fy = SELECTEDVALUE ( DimDate[FY Start Year] )
+        RETURN "vs FY" & ( fy - 1 ) & "-" & RIGHT ( fy, 2 )

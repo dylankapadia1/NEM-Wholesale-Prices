@@ -218,3 +218,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Project: raw AEMO CSVs are large and re-downloadable with scripts/download_aemo.ps1, so never commit them
+data/aemo_price_demand/
